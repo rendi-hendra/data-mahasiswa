@@ -6,6 +6,7 @@ export class MahasiswaValidation {
     name: z.string().min(1).max(100),
     prodi: z.string().min(1).max(100),
     semester: z.number(),
+    dpa_id: z.number(),
   });
 
   static readonly UPDATE: ZodType = z.object({

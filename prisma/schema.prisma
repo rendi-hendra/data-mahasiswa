@@ -19,28 +19,37 @@ model Mahasiswa {
   name String @db.VarChar(100)
   prodi String @db.VarChar(100)
   semester Int @db.Int
+  dpa_id Int
 
-  matakuliah Matakuliah[]
+  enrollment Enrollment []
+
+  dosen Dosen @relation(fields: [dpa_id], references: [id])
 
   @@map("mahasiswa")
 }
 
 model Matakuliah {
-  id Int @id @db.Int
-  name String @db.VarChar(100)
+  kode_mk String @id @db.VarChar(10)
+  name String @unique @db.VarChar(100)
   sks Int
-  nim Int
 
-  mahasiswa Mahasiswa @relation(fields: [nim], references: [nim])
+  enrollment Enrollment []
   
   @@map("matakuliah")
 }
 
-// model Dosen {
-//   id Int @id @default(autoincrement())
-//   name String @db.VarChar(100)
+model Dosen {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(100)
 
-//   matakuliah Matakuliah[]
+  mahasiswa Mahasiswa []
+}
 
-//   @@map("dosen")
-// }
+model Enrollment {
+  mahasiswaId   Int
+  matakuliahId  String @db.VarChar(10)
+  mahasiswa     Mahasiswa    @relation(fields: [mahasiswaId], references: [nim])
+  matakuliah    Matakuliah   @relation(fields: [matakuliahId], references: [kode_mk])
+
+  @@id([mahasiswaId, matakuliahId]) // Membuat primary key gabungan
+}

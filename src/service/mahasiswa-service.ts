@@ -1,4 +1,4 @@
-import { Mahasiswa } from "@prisma/client";
+import { Mahasiswa, Dosen } from "@prisma/client";
 import { prismaClient } from "../app/database";
 import { ResponseError } from "../error/response-error";
 import {
@@ -54,8 +54,25 @@ export class MahasiswaService {
   }
 
   static async get(nim: number): Promise<MahasiswaResponse> {
-    const mahasiswa = await this.checkMahasiswaMustExists(nim);
-    return toMahasiswaResponse(mahasiswa);
+    const mahasiswa = await prismaClient.mahasiswa.findFirst({
+      where: {
+        nim: nim,
+      },
+      include: {
+        dosen: true,
+        enrollment: {
+          select: {
+            matakuliah: true,
+          },
+        },
+      },
+    });
+
+    if (!mahasiswa) {
+      throw new ResponseError(404, "Mahasiswa not found");
+    }
+
+    return mahasiswa;
   }
 
   static async update(

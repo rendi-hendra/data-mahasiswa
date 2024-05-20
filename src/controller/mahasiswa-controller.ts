@@ -25,6 +25,7 @@ export class MahasiswaController {
     try {
       const nim = Number(req.params.nim);
       const response = await MahasiswaService.get(nim);
+
       res.status(200).json({
         data: response,
       });
